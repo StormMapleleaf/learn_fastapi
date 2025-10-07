@@ -34,8 +34,9 @@ def upgrade() -> None:
 
     # 插入默认用户
     default_email = "admin@admin.com"
-    # 这里的密码是 'admin' 的 bcrypt hash，可根据实际需要替换
-    default_hashed_password = "$2b$12$KIXQ4b1r5QyQeFQxQ1QeF.QQeFQxQ1QeFQxQ1QeFQxQ1QeFQxQ1QeF"
+    # 使用代码生成哈希，确保和登录一致
+    from app.core.security import generate_bcrypt_sha256_hash
+    default_hashed_password = generate_bcrypt_sha256_hash("admin")
     conn = op.get_bind()
     conn.execute(
         sa.text(
