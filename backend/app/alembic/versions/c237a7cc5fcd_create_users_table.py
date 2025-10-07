@@ -32,6 +32,18 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     # ### end Alembic commands ###
 
+    # 插入默认用户
+    default_email = "admin@admin.com"
+    # 这里的密码是 'admin' 的 bcrypt hash，可根据实际需要替换
+    default_hashed_password = "$2b$12$KIXQ4b1r5QyQeFQxQ1QeF.QQeFQxQ1QeFQxQ1QeFQxQ1QeFQxQ1QeF"
+    conn = op.get_bind()
+    conn.execute(
+        sa.text(
+            "INSERT INTO users (email, hashed_password, is_active) VALUES (:email, :hashed_password, :is_active)"
+        ),
+        {"email": default_email, "hashed_password": default_hashed_password, "is_active": True}
+    )
+
 
 def downgrade() -> None:
     """Downgrade schema."""
