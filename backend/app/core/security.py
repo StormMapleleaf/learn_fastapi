@@ -5,7 +5,6 @@ from app.core.config import settings
 import bcrypt
 import hashlib
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def pre_hash_password(password: str) -> bytes:
     """先用 SHA-256 对密码进行预哈希，防止 bcrypt 72 字符截断问题"""
