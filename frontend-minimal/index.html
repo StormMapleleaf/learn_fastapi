@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minimal Admin</title>
+<link rel="stylesheet" href="assets/css/styles.css" />
+<script type="module" src="assets/js/app.js"></script>
+
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Minimal Admin</div>
+    <nav class="top-actions">
+      <span id="whoami"></span>
+      <button id="btn-logout" class="btn">退出</button>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="nav-item active" href="index.html">仪表盘</a>
+      <a class="nav-item" href="users.html">用户管理</a>
+    </aside>
+    <main class="content">
+      <h2>欢迎！</h2>
+      <p>这是一个无构建、原生 HTML/CSS/JS 的前端骨架。</p>
+
+      <section class="card">
+        <h3>后端健康检查</h3>
+        <div id="healthz">检测中…</div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireAuth, currentUser, logout } from './assets/js/auth.js';
+    import { api } from './assets/js/api.js';
+    import { showAlert } from './assets/js/ui.js';
+    requireAuth();
+
+    const who = document.getElementById('whoami');
+    who.textContent = currentUser()?.email || '';
+
+    document.getElementById('btn-logout').addEventListener('click', () => logout());
+
+    // health check
+    (async () => {
+      const el = document.getElementById('healthz');
+      try {
+        const data = await api.get('/healthz');
+        el.textContent = JSON.stringify(data);
+      } catch (err) {
+        el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');
+      }
+    })();
+  </script>
+</body>
+</html>

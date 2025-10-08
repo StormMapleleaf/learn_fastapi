@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minimal Admin</title>
+<link rel="stylesheet" href="assets/css/styles.css" />
+<script type="module" src="assets/js/app.js"></script>
+
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Minimal Admin</div>
+    <nav class="top-actions">
+      <span id="whoami"></span>
+      <button id="btn-logout" class="btn">退出</button>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="nav-item" href="index.html">仪表盘</a>
+      <a class="nav-item active" href="users.html">用户管理</a>
+    </aside>
+    <main class="content">
+      <h2>用户管理（CRUD 原型）</h2>
+
+      <section class="grid">
+        <div class="card">
+          <h3>创建用户</h3>
+          <form id="form-create">
+            <label>邮箱
+              <input name="email" type="email" placeholder="user@example.com" required />
+            </label>
+            <button class="btn primary" type="submit">创建</button>
+          </form>
+          <div id="create-msg" class="alert none"></div>
+        </div>
+
+        <div class="card">
+          <h3>按 ID 查询</h3>
+          <form id="form-get">
+            <label>ID
+              <input name="id" type="number" placeholder="1" required />
+            </label>
+            <button class="btn" type="submit">查询</button>
+          </form>
+          <pre id="get-result" class="pre"></pre>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h3>更新用户邮箱</h3>
+          <form id="form-update">
+            <label>ID
+              <input name="id" type="number" placeholder="1" required />
+            </label>
+            <label>新邮箱
+              <input name="email" type="email" placeholder="new@example.com" required />
+            </label>
+            <button class="btn" type="submit">更新</button>
+          </form>
+          <div id="update-msg" class="alert none"></div>
+        </div>
+
+        <div class="card">
+          <h3>删除用户</h3>
+          <form id="form-delete">
+            <label>ID
+              <input name="id" type="number" placeholder="1" required />
+            </label>
+            <button class="btn danger" type="submit">删除</button>
+          </form>
+          <div id="delete-msg" class="alert none"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>用户列表</h3>
+        <p class="muted">尝试调用 <code>GET /users?limit=50</code>。若后端未实现，会提示。</p>
+        <button id="btn-load" class="btn">加载列表</button>
+        <table id="users-table" class="table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Email</th><th>Created At</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="list-msg" class="alert none"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireAuth, currentUser, logout } from './assets/js/auth.js';
+    import { bindUserCrud } from './assets/js/users.js';
+    requireAuth();
+    document.getElementById('whoami').textContent = currentUser()?.email || '';
+    document.getElementById('btn-logout').addEventListener('click', () => logout());
+    bindUserCrud();
+  </script>
+</body>
+</html>

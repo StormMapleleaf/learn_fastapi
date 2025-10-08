@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minimal Admin</title>
+<link rel="stylesheet" href="assets/css/styles.css" />
+<script type="module" src="assets/js/app.js"></script>
+
+</head>
+<body class="auth-body">
+  <main class="auth-card">
+    <h1>登录</h1>
+    <form id="login-form">
+      <label>API Base URL
+        <input name="apiBaseUrl" type="text" placeholder="http://127.0.0.1:8000" />
+      </label>
+
+      <label>Auth Mode
+        <select name="authMode">
+          <option value="demo">demo（不访问后端登录）</option>
+          <option value="jwt">jwt（POST /auth/login 获取 token）</option>
+        </select>
+      </label>
+
+      <label>邮箱
+        <input name="email" type="email" placeholder="demo@example.com" required />
+      </label>
+
+      <label>密码（demo 模式可随意）
+        <input name="password" type="password" placeholder="••••••" />
+      </label>
+
+      <button type="submit" class="btn primary">登录</button>
+    </form>
+
+    <div id="login-msg" class="alert none"></div>
+  </main>
+
+  <script type="module">
+    import { initLoginPage } from './assets/js/auth.js';
+    initLoginPage();
+  </script>
+</body>
+</html>
