@@ -10,7 +10,7 @@ export function bindUserCrud() {
     const email = e.target.email.value.trim();
     const msg = q('#create-msg');
     try {
-      const data = await api.post('/users', { email });
+      const data = await api.post('/users/register', { email });
       msg.className = 'alert success';
       msg.textContent = '创建成功：ID ' + data.id;
     } catch (err) {
@@ -39,7 +39,7 @@ export function bindUserCrud() {
     const email = e.target.email.value.trim();
     const msg = q('#update-msg');
     try {
-      const data = await api.patch('/users/' + id, { email });
+      const data = await api.post('/users/update/' + id, { email });
       msg.className = 'alert success';
       msg.textContent = '更新成功：' + JSON.stringify(data);
     } catch (err) {
@@ -59,7 +59,7 @@ export function bindUserCrud() {
     const id = e.target.id.value;
     const msg = q('#delete-msg');
     try {
-      await api.del('/users/' + id);
+      await api.post('/users/delete/' + id);
       msg.className = 'alert success';
       msg.textContent = '删除成功';
     } catch (err) {
