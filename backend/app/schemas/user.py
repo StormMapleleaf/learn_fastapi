@@ -6,3 +6,4 @@ class UserLogin(BaseModel):
 
 class UserCreate(BaseModel):
     email: EmailStr
+

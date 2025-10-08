@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import auth, users
+from app.api.routes import auth, users, film
 
 app = FastAPI(title="FastAPI Admin API")
 
@@ -23,3 +23,4 @@ async def healthz():
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(film.router)

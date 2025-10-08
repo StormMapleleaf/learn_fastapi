@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>电影与演员</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script type="module" src="assets/js/app.js"></script>
+  <script type="module" src="assets/js/film.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Minimal Admin</div>
+    <nav class="top-actions">
+      <span id="whoami"></span>
+      <button id="btn-logout" class="btn">退出</button>
+    </nav>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="nav-item" href="index.html">仪表盘</a>
+      <a class="nav-item" href="users.html">用户管理</a>
+      <a class="nav-item active" href="film.html">电影与演员</a>
+    </aside>
+    <main class="content">
+      <h2>电影与演员</h2>
+      <section class="card">
+        <h3>电影列表</h3>
+        <p class="muted">尝试调用 <code>GET /film/list?page=1</code>。若后端未实现，会提示。</p>
+        <div style="margin-bottom:12px;">
+          <input id="film-search" type="text" placeholder="输入电影名搜索" style="width:200px;margin-right:8px;">
+          <button id="btn-search" class="btn">搜索</button>
+          <button id="btn-load" class="btn">加载列表</button>
+        </div>
+        <table id="film-table" class="table">
+          <thead>
+            <tr>
+              <th>电影名</th>
+              <th>描述</th>
+              <th>演员</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="film-msg" class="alert none"></div>
+        <div style="margin-top:16px;display:flex;gap:8px;">
+          <button class="btn" id="prev-page">上一页</button>
+          <span id="page-info"></span>
+          <button class="btn" id="next-page">下一页</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script type="module">
+    import { requireAuth, currentUser, logout } from './assets/js/auth.js';
+    import { bindFilmList } from './assets/js/film.js';
+    requireAuth();
+    document.getElementById('whoami').textContent = currentUser()?.email || '';
+    document.getElementById('btn-logout').addEventListener('click', () => logout());
+    bindFilmList();
+  </script>
+</body>
+</html>
