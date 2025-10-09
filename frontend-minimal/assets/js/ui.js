@@ -38,6 +38,17 @@ export async function loadMenus(topbarSelector, sidebarSelector, menuJsonPath) {
   // 获取当前页面文件名
   const currentPage = location.pathname.split('/').pop();
   sidebar.innerHTML = menus.sidebar.map(item => `
-    <a class="nav-item${item.href === currentPage ? ' active' : ''}" href="${item.href}">${item.text}</a>
+    <div>
+      <a class="nav-item${item.href === currentPage ? ' active' : ''}" href="${item.href}">${item.text}</a>
+      ${item.children ? `
+        <div class="submenu">
+          <ul>
+            ${item.children.map(subItem => `
+              <li><a class="nav-item${subItem.href === currentPage ? ' active' : ''}" href="${subItem.href}">${subItem.text}</a></li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : ''}
+    </div>
   `).join('');
 }

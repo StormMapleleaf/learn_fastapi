@@ -9,6 +9,12 @@
   "sidebar": [
     { "text": "仪表盘", "href": "index.html", "active": true },
     { "text": "用户管理", "href": "users.html" },
-    { "text": "电影与演员", "href": "film.html" }
+    {
+      "text": "电影与演员",
+      "href": "film.html",
+      "children": [
+        { "text": "更新信息", "href": "film_update.html" }
+      ]
+    }
   ]
 }

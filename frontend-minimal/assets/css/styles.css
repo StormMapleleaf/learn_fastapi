@@ -78,20 +78,45 @@ pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   top: 56px; /* 避免与顶部栏重叠 */
   left: 0;
   bottom: 0;
-  width: 100px; /* 缩小侧边栏宽度 */
+  width: 160px; /* 调整侧边栏宽度以容纳子菜单 */
   border-right: 1px solid var(--border);
   background: rgba(22,27,46,.7);
   padding: 16px;
   overflow-y: auto; /* 添加滚动条以防内容溢出 */
+  z-index: 5; /* 确保侧边栏在内容之上 */
 }
 .nav-item {
   display: block; padding: 10px 12px; border-radius: 8px; color: var(--text);
 }
 .nav-item.active, .nav-item:hover { background: #1d2541; }
+.submenu {
+  margin: 8px 0 0 0;
+  padding: 0 0 0 8px;
+  border-left: none; /* 去掉原有左边线以更好适配列表样式 */
+}
+.submenu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.submenu li {
+  margin: 4px 0;
+}
+.submenu .nav-item {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.submenu .nav-item.active, .submenu .nav-item:hover {
+  background: #1d2541;
+  color: var(--text);
+}
 
 .content {
   padding: 24px;
-  margin-left: 160px; /* 更新内容区域的左边距以匹配侧边栏宽度 */
+  margin-left: 160px; /* 与 sidebar.width 保持一致 */
 }
 h1,h2,h3 { margin: 0 0 12px 0; }
 
