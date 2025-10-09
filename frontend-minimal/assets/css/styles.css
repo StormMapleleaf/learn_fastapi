@@ -138,6 +138,21 @@ input, select {
 }
 input:focus, select:focus { border-color: var(--primary); }
 
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  background: #0f1530;
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  min-height: 120px; /* 确保描述区域高度合适 */
+  resize: vertical; /* 允许垂直拉伸，但限制横向破坏布局 */
+}
+textarea:focus { border-color: var(--primary); }
+
 .btn {
   display: inline-block; padding: 8px 14px; border: 1px solid var(--border);
   border-radius: 8px; background: #1a2140; color: var(--text); cursor: pointer;
