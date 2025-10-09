@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>更新电影信息</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script type="module" src="assets/js/app.js"></script>
+</head>
+<body>
+  <div id="topbar"></div>
+  <div class="layout">
+    <div id="sidebar"></div>
+    <main class="content">
+      <h2>更新电影信息</h2>
+      
+      <section class="grid">
+        <div class="card">
+          <h3>添加电影</h3>
+          <form id="form-add-film">
+            <label>电影名称
+              <input name="title" type="text" placeholder="请输入电影名称" required />
+            </label>
+            <label>电影描述
+              <textarea name="description" placeholder="请输入电影描述"></textarea>
+            </label>
+            <label>演员列表（逗号分隔）
+              <input name="actors" type="text" placeholder="演员1, 演员2, 演员3" />
+            </label>
+            <button class="btn primary" type="submit">添加电影</button>
+          </form>
+          <div id="add-film-msg" class="alert none"></div>
+        </div>
+        
+        <div class="card">
+          <h3>更新电影</h3>
+          <form id="form-update-film">
+            <label>电影ID
+              <input name="id" type="number" placeholder="请输入电影ID" required />
+            </label>
+            <label>电影名称
+              <input name="title" type="text" placeholder="请输入电影名称" required />
+            </label>
+            <label>电影描述
+              <textarea name="description" placeholder="请输入电影描述"></textarea>
+            </label>
+            <label>演员列表（逗号分隔）
+              <input name="actors" type="text" placeholder="演员1, 演员2, 演员3" />
+            </label>
+            <button class="btn" type="submit">更新电影</button>
+          </form>
+          <div id="update-film-msg" class="alert none"></div>
+        </div>
+      </section>
+      
+      <section class="card">
+        <h3>删除电影</h3>
+        <form id="form-delete-film">
+          <label>电影ID
+            <input name="id" type="number" placeholder="请输入要删除的电影ID" required />
+          </label>
+          <button class="btn danger" type="submit">删除电影</button>
+        </form>
+        <div id="delete-film-msg" class="alert none"></div>
+      </section>
+      
+      <section class="card">
+        <h3>电影详情</h3>
+        <p class="muted">通过ID查询电影详细信息</p>
+        <form id="form-get-film">
+          <label>ID
+            <input name="id" type="number" placeholder="请输入电影ID" required />
+          </label>
+          <button class="btn" type="submit">查询电影</button>
+        </form>
+        <pre id="get-film-result" class="pre"></pre>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireAuth, currentUser, logout } from './assets/js/auth.js';
+    import { api } from './assets/js/api.js';
+    import { showAlert, loadMenus } from './assets/js/ui.js';
+    requireAuth();
+
+    // Load menus
+    await loadMenus('#topbar', '#sidebar', 'assets/data/menus.json');
+
+    // 需在菜单渲染后再绑定
+    document.getElementById('whoami').textContent = currentUser()?.email || '';
+    document.getElementById('btn-logout').onclick = () => logout();
+    
+    // 添加电影功能
+    document.getElementById('form-add-film').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const title = formData.get('title').trim();
+      const description = formData.get('description').trim();
+      const actors = formData.get('actors').trim();
+      
+      const msgEl = document.getElementById('add-film-msg');
+      
+      try {
+        const filmData = {
+          title,
+          description: description || undefined
+        };
+        
+        if (actors) {
+          filmData.actors = actors.split(',').map(actor => actor.trim()).filter(actor => actor);
+        }
+        
+        // 假设后端有添加电影的API端点
+        const data = await api.post('/film/create', filmData);
+        msgEl.className = 'alert success';
+        msgEl.textContent = '电影添加成功：' + JSON.stringify(data, null, 2);
+        e.target.reset();
+      } catch (err) {
+        msgEl.className = 'alert error';
+        msgEl.textContent = '添加失败：' + err.message;
+      }
+    });
+    
+    // 更新电影功能
+    document.getElementById('form-update-film').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const id = formData.get('id').trim();
+      const title = formData.get('title').trim();
+      const description = formData.get('description').trim();
+      const actors = formData.get('actors').trim();
+      
+      const msgEl = document.getElementById('update-film-msg');
+      
+      try {
+        const filmData = {
+          title,
+          description: description || undefined
+        };
+        
+        if (actors) {
+          filmData.actors = actors.split(',').map(actor => actor.trim()).filter(actor => actor);
+        }
+        
+        // 假设后端有更新电影的API端点
+        const data = await api.patch(`/film/update/${id}`, filmData);
+        msgEl.className = 'alert success';
+        msgEl.textContent = '电影更新成功：' + JSON.stringify(data, null, 2);
+      } catch (err) {
+        if (err.status === 404) {
+          msgEl.className = 'alert error';
+          msgEl.innerHTML = showAlert('后端尚未实现更新接口，或指定的电影不存在。', 'error');
+        } else {
+          msgEl.className = 'alert error';
+          msgEl.textContent = '更新失败：' + err.message;
+        }
+      }
+    });
+    
+    // 删除电影功能
+    document.getElementById('form-delete-film').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const id = formData.get('id').trim();
+      
+      const msgEl = document.getElementById('delete-film-msg');
+      
+      try {
+        // 假设后端有删除电影的API端点
+        await api.del(`/film/delete/${id}`);
+        msgEl.className = 'alert success';
+        msgEl.textContent = '电影删除成功';
+        e.target.reset();
+      } catch (err) {
+        if (err.status === 404) {
+          msgEl.className = 'alert error';
+          msgEl.innerHTML = showAlert('后端尚未实现删除接口，或指定的电影不存在。', 'error');
+        } else {
+          msgEl.className = 'alert error';
+          msgEl.textContent = '删除失败：' + err.message;
+        }
+      }
+    });
+    
+    // 查询电影功能
+    document.getElementById('form-get-film').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const id = formData.get('id').trim();
+      
+      const resultEl = document.getElementById('get-film-result');
+      
+      try {
+        // 假设后端有查询电影的API端点
+        const data = await api.get(`/film/detail/${id}`);
+        resultEl.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        resultEl.textContent = '查询失败：' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
