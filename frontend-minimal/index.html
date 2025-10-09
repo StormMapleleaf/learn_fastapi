@@ -10,20 +10,9 @@
 
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">Minimal Admin</div>
-    <nav class="top-actions">
-      <span id="whoami"></span>
-      <button id="btn-logout" class="btn">退出</button>
-    </nav>
-  </header>
-
+  <div id="topbar"></div>
   <div class="layout">
-    <aside class="sidebar">
-      <a class="nav-item active" href="index.html">仪表盘</a>
-      <a class="nav-item" href="users.html">用户管理</a>
-      <a class="nav-item" href="film.html">电影与演员</a>
-    </aside>
+    <div id="sidebar"></div>
     <main class="content">
       <h2>欢迎！</h2>
       <p>这是一个无构建、原生 HTML/CSS/JS 的前端骨架。</p>
@@ -38,8 +27,12 @@
   <script type="module">
     import { requireAuth, currentUser, logout } from './assets/js/auth.js';
     import { api } from './assets/js/api.js';
-    import { showAlert } from './assets/js/ui.js';
+    import { showAlert, loadHtml } from './assets/js/ui.js';
     requireAuth();
+
+    // Load topbar and sidebar
+    await loadHtml('#topbar', 'topbar.html');
+    await loadHtml('#sidebar', 'sidebar.html');
 
     const who = document.getElementById('whoami');
     who.textContent = currentUser()?.email || '';
@@ -52,6 +45,13 @@
       try {
         const data = await api.get('/healthz');
         el.textContent = JSON.stringify(data);
+      } catch (err) {
+        el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');
+      }
+    })();
+  </script>
+</body>
+</html>
       } catch (err) {
         el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');
       }

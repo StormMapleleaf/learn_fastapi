@@ -9,8 +9,13 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body {
+  height: 100%; /* 确保根元素高度为 100% */
+}
 body {
+  display: flex; /* 添加 flex 布局 */
+  flex-direction: column; /* 垂直排列 */
+  height: 100%; /* 确保 body 高度为 100% */
   margin: 0;
   font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, PingFang SC, Noto Sans SC, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   color: var(--text);
@@ -28,11 +33,19 @@ pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 }
 .brand { font-weight: 700; letter-spacing: .2px; }
 
-.layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: calc(100vh - 56px); }
+.layout {
+  flex: 1; /* 使 .layout 占满剩余高度 */
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  height: 100%; /* 确保 .layout 高度为 100% */
+}
 .sidebar {
+  height: 100%; /* 确保侧边栏高度占满 */
   border-right: 1px solid var(--border);
   background: rgba(22,27,46,.7);
   padding: 16px;
+  overflow-y: auto; /* 添加滚动条以防内容溢出 */
 }
 .nav-item {
   display: block; padding: 10px 12px; border-radius: 8px; color: var(--text);

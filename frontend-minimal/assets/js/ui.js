@@ -6,3 +6,8 @@ export function escapeHtml(s='') {
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
   }[c]));
 }
+export async function loadHtml(selector, url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`无法加载 ${url}`);
+  document.querySelector(selector).innerHTML = await res.text();
+}
