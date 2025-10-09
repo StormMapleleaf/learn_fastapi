@@ -52,3 +52,61 @@ export async function loadMenus(topbarSelector, sidebarSelector, menuJsonPath) {
     </div>
   `).join('');
 }
+
+// 添加创建模态框的函数
+export function createModal(title, content) {
+  // 如果已存在模态框，先移除
+  const existingModal = document.getElementById('detail-modal');
+  if (existingModal) existingModal.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'detail-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  `;
+
+  modal.innerHTML = `
+    <div class="modal-content" style="
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    ">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0;">${title}</h3>
+        <button class="btn" id="close-modal" style="min-width: auto; padding: 4px 10px;">×</button>
+      </div>
+      <div>${content}</div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // 绑定关闭事件
+  modal.querySelector('#close-modal').addEventListener('click', () => {
+    modal.remove();
+  });
+
+  // 点击模态框外部关闭
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+
+  return modal;
+}

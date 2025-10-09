@@ -62,6 +62,19 @@ def list_films_with_actors(
     return list(film_map.values())
 
 
+# 新增根据ID获取电影详情接口
+@router.get("/{film_id}", response_model=FilmRead)
+def get_film_by_id(film_id: int, db: Session = Depends(get_db)):
+    # 查询电影信息
+    film_stmt = select(models.film).where(models.film.c.film_id == film_id)
+    film_result = db.execute(film_stmt).fetchone()
+    
+    if not film_result:
+        raise HTTPException(status_code=404, detail="Film not found")
+    
+    return film_result
+
+
 # 新增创建电影接口
 @router.post("/", response_model=FilmRead)
 def create_film(film: FilmBase, db: Session = Depends(get_db)):

@@ -1,5 +1,5 @@
 import { api } from './api.js';
-import { showAlert } from './ui.js';
+import { showAlert, createModal } from './ui.js';
 
 function q(sel) { return document.querySelector(sel); }
 
@@ -34,6 +34,9 @@ export function bindFilmList() {
           : '暂无演员';
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${film.title}</td><td>${film.description ?? ''}</td><td>${actors}</td>`;
+        // 添加点击事件以显示详情
+        tr.style.cursor = 'pointer';
+        tr.addEventListener('click', () => showFilmDetail(film.film_id));
         tableBody.appendChild(tr);
       }
       if (list.length === 0) {
@@ -43,6 +46,75 @@ export function bindFilmList() {
     } catch (err) {
       msg.className = 'alert error';
       msg.innerHTML = showAlert('加载失败：' + err.message, 'error');
+    }
+  }
+
+  // 添加显示电影详情的函数
+  async function showFilmDetail(filmId) {
+    try {
+      const film = await api.get(`/film/${filmId}`);
+      
+      const specialFeatures = film.special_features && film.special_features.length 
+        ? film.special_features.join(', ') 
+        : '无';
+        
+      const content = `
+        <div style="display: grid; gap: 12px;">
+          <div>
+            <label style="color: var(--muted); margin: 0 0 4px 0;">电影名</label>
+            <div>${film.title}</div>
+          </div>
+          <div>
+            <label style="color: var(--muted); margin: 0 0 4px 0;">描述</label>
+            <div>${film.description || '无'}</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">发行年份</label>
+              <div>${film.release_year}</div>
+            </div>
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">语言</label>
+              <div>${film.language_id}</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">租赁时长</label>
+              <div>${film.rental_duration} 天</div>
+            </div>
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">租赁价格</label>
+              <div>$${film.rental_rate}</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">时长</label>
+              <div>${film.length} 分钟</div>
+            </div>
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">替换成本</label>
+              <div>$${film.replacement_cost}</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">评级</label>
+              <div>${film.rating}</div>
+            </div>
+            <div>
+              <label style="color: var(--muted); margin: 0 0 4px 0;">特殊功能</label>
+              <div>${specialFeatures}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      createModal(`电影详情: ${film.title}`, content);
+    } catch (err) {
+      const content = `<div class="alert error">加载详情失败: ${err.message}</div>`;
+      createModal('错误', content);
     }
   }
 
