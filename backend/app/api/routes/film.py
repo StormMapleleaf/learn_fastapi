@@ -72,7 +72,18 @@ def get_film_by_id(film_id: int, db: Session = Depends(get_db)):
     if not film_result:
         raise HTTPException(status_code=404, detail="Film not found")
     
-    return film_result
+    # 查询语言信息
+    language_stmt = select(models.language).where(models.language.c.language_id == film_result.language_id)
+    language_result = db.execute(language_stmt).fetchone()
+    
+    # 构建返回数据，将language_id替换为language名称
+    film_dict = film_result._asdict()  # 使用_asdict()方法替换dict()构造函数
+    if language_result:
+        film_dict['language'] = language_result.name
+    else:
+        film_dict['language'] = None
+    
+    return film_dict
 
 
 # 新增创建电影接口

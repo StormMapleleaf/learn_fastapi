@@ -52,3 +52,10 @@ film_category = Table(
     Column('category_id', Integer, ForeignKey('category.category_id'), primary_key=True),
     Column('last_update', DateTime, nullable=False),
 )
+
+language = Table(
+    'language', metadata,
+    Column('language_id', Integer, primary_key=True),
+    Column('name', String(20), nullable=False),
+    Column('last_update', DateTime, nullable=False),
+)
