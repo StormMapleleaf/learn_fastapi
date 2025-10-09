@@ -24,9 +24,6 @@
             <label>电影描述
               <textarea name="description" placeholder="请输入电影描述"></textarea>
             </label>
-            <label>演员列表（逗号分隔）
-              <input name="actors" type="text" placeholder="演员1, 演员2, 演员3" />
-            </label>
             <button class="btn primary" type="submit">添加电影</button>
           </form>
           <div id="add-film-msg" class="alert none"></div>
@@ -40,12 +37,6 @@
             </label>
             <label>电影名称
               <input name="title" type="text" placeholder="请输入电影名称" required />
-            </label>
-            <label>电影描述
-              <textarea name="description" placeholder="请输入电影描述"></textarea>
-            </label>
-            <label>演员列表（逗号分隔）
-              <input name="actors" type="text" placeholder="演员1, 演员2, 演员3" />
             </label>
             <button class="btn" type="submit">更新电影</button>
           </form>
@@ -97,7 +88,6 @@
       const formData = new FormData(e.target);
       const title = formData.get('title').trim();
       const description = formData.get('description').trim();
-      const actors = formData.get('actors').trim();
       
       const msgEl = document.getElementById('add-film-msg');
       
@@ -107,12 +97,8 @@
           description: description || undefined
         };
         
-        if (actors) {
-          filmData.actors = actors.split(',').map(actor => actor.trim()).filter(actor => actor);
-        }
-        
-        // 假设后端有添加电影的API端点
-        const data = await api.post('/film/create', filmData);
+        // 修改为与后端一致的API路径
+        const data = await api.post('/film/', filmData);
         msgEl.className = 'alert success';
         msgEl.textContent = '电影添加成功：' + JSON.stringify(data, null, 2);
         e.target.reset();
@@ -128,23 +114,17 @@
       const formData = new FormData(e.target);
       const id = formData.get('id').trim();
       const title = formData.get('title').trim();
-      const description = formData.get('description').trim();
-      const actors = formData.get('actors').trim();
       
       const msgEl = document.getElementById('update-film-msg');
       
       try {
+        // 根据后端API修改，只传递title参数
         const filmData = {
-          title,
-          description: description || undefined
+          title
         };
         
-        if (actors) {
-          filmData.actors = actors.split(',').map(actor => actor.trim()).filter(actor => actor);
-        }
-        
-        // 假设后端有更新电影的API端点
-        const data = await api.patch(`/film/update/${id}`, filmData);
+        // 修改为与后端一致的API路径和参数
+        const data = await api.put(`/film/${id}`, filmData);
         msgEl.className = 'alert success';
         msgEl.textContent = '电影更新成功：' + JSON.stringify(data, null, 2);
       } catch (err) {
@@ -153,7 +133,8 @@
           msgEl.innerHTML = showAlert('后端尚未实现更新接口，或指定的电影不存在。', 'error');
         } else {
           msgEl.className = 'alert error';
-          msgEl.textContent = '更新失败：' + err.message;
+          // 修复：正确显示错误信息而不是[object Object]
+          msgEl.textContent = '更新失败：' + (err.message || JSON.stringify(err));
         }
       }
     });
@@ -178,7 +159,8 @@
           msgEl.innerHTML = showAlert('后端尚未实现删除接口，或指定的电影不存在。', 'error');
         } else {
           msgEl.className = 'alert error';
-          msgEl.textContent = '删除失败：' + err.message;
+          // 修复：正确显示错误信息而不是[object Object]
+          msgEl.textContent = '删除失败：' + (err.message || JSON.stringify(err));
         }
       }
     });

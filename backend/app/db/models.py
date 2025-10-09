@@ -45,3 +45,10 @@ film_actor = Table(
     Column('film_id', Integer, ForeignKey('film.film_id'), primary_key=True),
     Column('last_update', DateTime, nullable=False),
 )
+
+film_category = Table(  
+'film_category', metadata,
+    Column('film_id', Integer, ForeignKey('film.film_id'), primary_key=True),
+    Column('category_id', Integer, ForeignKey('category.category_id'), primary_key=True),
+    Column('last_update', DateTime, nullable=False),
+)

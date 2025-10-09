@@ -5,14 +5,14 @@ from datetime import datetime
 class FilmBase(BaseModel):
     title: str
     description: Optional[str] = None
-    release_year: Optional[int] = None
-    language_id: int
-    rental_duration: int
-    rental_rate: float
-    length: Optional[int] = None
-    replacement_cost: float
-    rating: Optional[str] = None
-    special_features: Optional[str] = None
+    release_year: Optional[int] = 2023
+    language_id: Optional[int] = 1
+    rental_duration: Optional[int] = 3
+    rental_rate: Optional[float] = 2.99
+    length: Optional[int] = 0
+    replacement_cost: Optional[float] = 19.99
+    rating: Optional[str] = "G"
+    special_features: Optional[List[str]] = []
 
 # 电影读取模型
 class FilmRead(FilmBase):
