@@ -63,7 +63,7 @@ def list_films_with_actors(
 
 
 # 新增根据ID获取电影详情接口
-@router.get("/{film_id}", response_model=FilmRead)
+@router.get("/{film_id}")
 def get_film_by_id(film_id: int, db: Session = Depends(get_db)):
     # 查询电影信息
     film_stmt = select(models.film).where(models.film.c.film_id == film_id)
@@ -82,7 +82,6 @@ def get_film_by_id(film_id: int, db: Session = Depends(get_db)):
         film_dict['language'] = language_result.name
     else:
         film_dict['language'] = None
-    
     return film_dict
 
 

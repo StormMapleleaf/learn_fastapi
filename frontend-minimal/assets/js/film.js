@@ -75,7 +75,7 @@ export function bindFilmList() {
             </div>
             <div>
               <label style="color: var(--muted); margin: 0 0 4px 0;">语言</label>
-              <div>${film.language_id}</div>
+              <div>${film.language}</div>
             </div>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
