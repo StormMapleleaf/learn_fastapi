@@ -27,17 +27,15 @@
   <script type="module">
     import { requireAuth, currentUser, logout } from './assets/js/auth.js';
     import { api } from './assets/js/api.js';
-    import { showAlert, loadHtml } from './assets/js/ui.js';
+    import { showAlert, loadMenus } from './assets/js/ui.js';
     requireAuth();
 
-    // Load topbar and sidebar
-    await loadHtml('#topbar', 'topbar.html');
-    await loadHtml('#sidebar', 'sidebar.html');
+    // Load menus
+    await loadMenus('#topbar', '#sidebar', 'assets/data/menus.json');
 
-    const who = document.getElementById('whoami');
-    who.textContent = currentUser()?.email || '';
-
-    document.getElementById('btn-logout').addEventListener('click', () => logout());
+    // 需在菜单渲染后再绑定
+    document.getElementById('whoami').textContent = currentUser()?.email || '';
+    document.getElementById('btn-logout').onclick = () => logout();
 
     // health check
     (async () => {
@@ -51,6 +49,8 @@
     })();
   </script>
 </body>
+</html>
+</html>
 </html>
       } catch (err) {
         el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');

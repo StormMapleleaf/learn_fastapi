@@ -87,20 +87,20 @@
   <script type="module">
     import { requireAuth, currentUser, logout } from './assets/js/auth.js';
     import { bindUserCrud } from './assets/js/users.js';
-    import { loadHtml } from './assets/js/ui.js';
+    import { loadMenus } from './assets/js/ui.js';
     requireAuth();
 
-    // Load topbar and sidebar
-    await loadHtml('#topbar', 'topbar.html');
-    await loadHtml('#sidebar', 'sidebar.html');
+    // Load menus
+    await loadMenus('#topbar', '#sidebar', 'assets/data/menus.json');
 
+    // 需在菜单渲染后再绑定
     document.getElementById('whoami').textContent = currentUser()?.email || '';
-    document.getElementById('btn-logout').addEventListener('click', () => logout());
+    document.getElementById('btn-logout').onclick = () => logout();
+
     bindUserCrud();
   </script>
 </body>
 </html>
-    document.getElementById('btn-logout').addEventListener('click', () => logout());
     bindUserCrud();
   </script>
 </body>
