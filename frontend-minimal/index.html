@@ -33,7 +33,6 @@
     // Load menus
     await loadMenus('#topbar', '#sidebar', 'assets/data/menus.json');
 
-    // 需在菜单渲染后再绑定
     document.getElementById('whoami').textContent = currentUser()?.email || '';
     document.getElementById('btn-logout').onclick = () => logout();
 
@@ -43,15 +42,6 @@
       try {
         const data = await api.get('/healthz');
         el.textContent = JSON.stringify(data);
-      } catch (err) {
-        el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');
-      }
-    })();
-  </script>
-</body>
-</html>
-</html>
-</html>
       } catch (err) {
         el.innerHTML = showAlert('无法访问后端 /healthz，请检查 API Base URL 与 CORS 设置。', 'error');
       }

@@ -68,7 +68,7 @@ pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 100px 1fr; /* 更新网格布局以匹配侧边栏宽度 */
   gap: 0;
   height: 100%;
   margin-top: 56px; /* 避免内容被顶部栏遮挡 */
@@ -78,7 +78,7 @@ pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   top: 56px; /* 避免与顶部栏重叠 */
   left: 0;
   bottom: 0;
-  width: 220px;
+  width: 100px; /* 缩小侧边栏宽度 */
   border-right: 1px solid var(--border);
   background: rgba(22,27,46,.7);
   padding: 16px;
@@ -91,7 +91,7 @@ pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .content {
   padding: 24px;
-  margin-left: 220px; /* 避免内容被侧边栏遮挡 */
+  margin-left: 160px; /* 更新内容区域的左边距以匹配侧边栏宽度 */
 }
 h1,h2,h3 { margin: 0 0 12px 0; }
 
