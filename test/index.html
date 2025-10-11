@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影院座位预订</title>
+    <style>
+        .seat-table { border-collapse: collapse; }
+        .seat-table td {
+            width: 30px; height: 30px; text-align: center;
+            border: 1px solid #ccc; cursor: pointer;
+        }
+        .available { background: #4caf50; color: #fff; }
+        .reserved { background: #f44336; color: #fff; cursor: not-allowed; }
+        .list-container { margin-top: 30px; }
+        .list-box { display: flex; gap: 10px; margin-bottom: 10px; }
+        .list-item { padding: 5px 10px; background: #2196f3; color: #fff; border-radius: 4px; }
+        .list-btns { margin-bottom: 10px; }
+    </style>
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        async function fetchSeats() {
+            const response = await fetch(`${API_BASE}/seats`);
+            const data = await response.json();
+            const seatsDiv = document.getElementById('seats');
+            seatsDiv.innerHTML = '';
+            const table = document.createElement('table');
+            table.className = 'seat-table';
+            data.seats.forEach((row, rowIdx) => {
+                const tr = document.createElement('tr');
+                row.forEach((status, colIdx) => {
+                    const td = document.createElement('td');
+                    td.textContent = '';
+                    td.className = status;
+                    if (status === 'available') {
+                        td.onclick = () => reserveSeat(rowIdx + 1, colIdx + 1);
+                    }
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            });
+            seatsDiv.appendChild(table);
+        }
+
+        async function reserveSeat(row, col) {
+            if (!confirm(`确定要预约座位 (${row}, ${col}) 吗？`)) return;
+            const response = await fetch(`${API_BASE}/reserve/${row}/${col}`, { method: 'POST' });
+            if (response.ok) {
+                alert(`座位 (${row}, ${col}) 预约成功`);
+                fetchSeats();
+            } else {
+                const error = await response.json();
+                alert(error.detail);
+            }
+        }
+
+        async function fetchList() {
+            const response = await fetch(`${API_BASE}/list`);
+            const data = await response.json();
+            const listDiv = document.getElementById('list');
+            listDiv.innerHTML = '';
+            const box = document.createElement('div');
+            box.className = 'list-box';
+            data.list.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'list-item';
+                span.textContent = item;
+                box.appendChild(span);
+            });
+            listDiv.appendChild(box);
+        }
+
+        async function lpush() {
+            await fetch(`${API_BASE}/list/lpush`, { method: 'POST' });
+            fetchList();
+        }
+        async function rpush() {
+            await fetch(`${API_BASE}/list/rpush`, { method: 'POST' });
+            fetchList();
+        }
+        async function lpop() {
+            await fetch(`${API_BASE}/list/lpop`, { method: 'POST' });
+            fetchList();
+        }
+        async function rpop() {
+            await fetch(`${API_BASE}/list/rpop`, { method: 'POST' });
+            fetchList();
+        }
+
+        window.onload = function() {
+            fetchSeats();
+            fetchList();
+        }
+    </script>
+</head>
+<body>
+    <h1>电影院座位预订</h1>
+    <div id="seats"></div>
+    <div class="list-container">
+        <h2>Redis 列表可视化</h2>
+        <div class="list-btns">
+            <button onclick="lpush()">左侧推入 1 (LPUSH)</button>
+            <button onclick="rpush()">右侧推入 1 (RPUSH)</button>
+            <button onclick="lpop()">左侧弹出 (LPOP)</button>
+            <button onclick="rpop()">右侧弹出 (RPOP)</button>
+        </div>
+        <div id="list"></div>
+    </div>
+</body>
+</html>
