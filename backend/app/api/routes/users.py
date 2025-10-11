@@ -2,8 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.orm import Session
 from app.schemas.user import  UserCreate
 from app.db import models
-from app.db.database import get_db
+from app.db.database import get_db, redis_client
 from app.core.security import get_password_hash
+import json
+from datetime import datetime
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -26,17 +28,28 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return {"id": user.id, "email": user.email}
 
+def serialize_user(user):
+    return {
+        "id": user.id,
+        "email": user.email,
+        "created_at": user.created_at.isoformat() if isinstance(user.created_at, datetime) else user.created_at
+    }
+
 @router.get("/")
 async def list_users(limit: int = 50, db: Session = Depends(get_db)):
+    cache_key = f"users:limit:{limit}"
+    cached_users = redis_client.get(cache_key)
+    if cached_users:
+        print("从缓存中获取数据")
+        print(cached_users)
+        return json.loads(cached_users)
+
     users = db.query(models.User).filter(models.User.is_active == True).order_by(models.User.id).limit(limit).all()
-    return [
-        {
-            "id": u.id,
-            "email": u.email,
-            "created_at": getattr(u, "created_at", None)
-        }
-        for u in users
-    ]
+    user_list = [serialize_user(u) for u in users]
+    redis_client.set(cache_key, json.dumps(user_list), ex=30)
+    print("写入缓存")
+    print(redis_client.get(cache_key))
+    return user_list
 
 @router.post("/delete/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db)):
