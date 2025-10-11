@@ -16,6 +16,34 @@
         .list-box { display: flex; gap: 10px; margin-bottom: 10px; }
         .list-item { padding: 5px 10px; background: #2196f3; color: #fff; border-radius: 4px; }
         .list-btns { margin-bottom: 10px; }
+        .slide-in-left {
+            animation: slideInLeft 0.3s forwards;
+        }
+        .slide-in-right {
+            animation: slideInRight 0.3s forwards;
+        }
+        .slide-out-left {
+            animation: slideOutLeft 0.3s forwards;
+        }
+        .slide-out-right {
+            animation: slideOutRight 0.3s forwards;
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-40px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(40px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutLeft {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-40px); opacity: 0; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(40px); opacity: 0; }
+        }
     </style>
     <script>
         const API_BASE = 'http://localhost:8000';
@@ -55,17 +83,24 @@
             }
         }
 
-        async function fetchList() {
+        async function fetchList(withAnim = null) {
             const response = await fetch(`${API_BASE}/list`);
             const data = await response.json();
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = '';
             const box = document.createElement('div');
             box.className = 'list-box';
-            data.list.forEach(item => {
+            data.list.forEach((item, idx) => {
                 const span = document.createElement('span');
                 span.className = 'list-item';
                 span.textContent = item;
+                // 动画处理
+                if (withAnim === 'lpush' && idx === 0) {
+                    span.classList.add('slide-in-left');
+                }
+                if (withAnim === 'rpush' && idx === data.list.length - 1) {
+                    span.classList.add('slide-in-right');
+                }
                 box.appendChild(span);
             });
             listDiv.appendChild(box);
@@ -73,19 +108,39 @@
 
         async function lpush() {
             await fetch(`${API_BASE}/list/lpush`, { method: 'POST' });
-            fetchList();
+            fetchList('lpush');
         }
         async function rpush() {
             await fetch(`${API_BASE}/list/rpush`, { method: 'POST' });
-            fetchList();
+            fetchList('rpush');
         }
+
         async function lpop() {
-            await fetch(`${API_BASE}/list/lpop`, { method: 'POST' });
-            fetchList();
+            const listDiv = document.getElementById('list');
+            const firstItem = listDiv.querySelector('.list-item');
+            if (firstItem) {
+                firstItem.classList.add('slide-out-left');
+                firstItem.addEventListener('animationend', () => {
+                    fetch(`${API_BASE}/list/lpop`, { method: 'POST' }).then(fetchList);
+                }, { once: true });
+            } else {
+                await fetch(`${API_BASE}/list/lpop`, { method: 'POST' });
+                fetchList();
+            }
         }
         async function rpop() {
-            await fetch(`${API_BASE}/list/rpop`, { method: 'POST' });
-            fetchList();
+            const listDiv = document.getElementById('list');
+            const items = listDiv.querySelectorAll('.list-item');
+            const lastItem = items[items.length - 1];
+            if (lastItem) {
+                lastItem.classList.add('slide-out-right');
+                lastItem.addEventListener('animationend', () => {
+                    fetch(`${API_BASE}/list/rpop`, { method: 'POST' }).then(fetchList);
+                }, { once: true });
+            } else {
+                await fetch(`${API_BASE}/list/rpop`, { method: 'POST' });
+                fetchList();
+            }
         }
 
         window.onload = function() {
