@@ -22,8 +22,6 @@ async function handle(res) {
 export const api = {
   get: (path) => fetch(API_BASE_URL + path, { method: 'GET', headers: headers() }).then(handle),
   post: (path, body) => fetch(API_BASE_URL + path, { method: 'POST', headers: headers(), body: JSON.stringify(body) }).then(handle),
-  // 添加put方法以支持PUT请求
-  put: (path, body) => fetch(API_BASE_URL + path, { method: 'PUT', headers: headers(), body: JSON.stringify(body) }).then(handle),
   patch: (path, body) => fetch(API_BASE_URL + path, { method: 'PATCH', headers: headers(), body: JSON.stringify(body) }).then(handle),
   del: (path) => fetch(API_BASE_URL + path, { method: 'DELETE', headers: headers() }).then(handle),
 };
